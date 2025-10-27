@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.application.mapper.AppLeaveApplicationMapper">
+    
+    <resultMap type="AppLeaveApplication" id="AppLeaveApplicationResult">
+        <result property="leaveId"    column="leave_id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="leaveType"    column="leave_type"    />
+        <result property="startDatetime"    column="start_datetime"    />
+        <result property="endDatetime"    column="end_datetime"    />
+        <result property="leaveReason"    column="leave_reason"    />
+        <result property="approvalStatus"    column="approval_status"    />
+        <result property="currentApprover"    column="current_approver"    />
+        <result property="attachmentUrl"    column="attachment_url"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectAppLeaveApplicationVo">
+        select leave_id, user_id, leave_type, start_datetime, end_datetime, leave_reason, approval_status, current_approver, attachment_url, create_by, create_time, update_by, update_time from app_leave_application
+    </sql>
+
+    <select id="selectAppLeaveApplicationList" parameterType="AppLeaveApplication" resultMap="AppLeaveApplicationResult">
+        <include refid="selectAppLeaveApplicationVo"/>
+        <where>  
+            <if test="leaveType != null  and leaveType != ''"> and leave_type = #{leaveType}</if>
+            <if test="startDatetime != null "> and start_datetime = #{startDatetime}</if>
+            <if test="endDatetime != null "> and end_datetime = #{endDatetime}</if>
+        </where>
+    </select>
+    
+    <select id="selectAppLeaveApplicationByLeaveId" parameterType="Long" resultMap="AppLeaveApplicationResult">
+        <include refid="selectAppLeaveApplicationVo"/>
+        where leave_id = #{leaveId}
+    </select>
+
+    <insert id="insertAppLeaveApplication" parameterType="AppLeaveApplication" useGeneratedKeys="true" keyProperty="leaveId">
+        insert into app_leave_application
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">user_id,</if>
+            <if test="leaveType != null and leaveType != ''">leave_type,</if>
+            <if test="startDatetime != null">start_datetime,</if>
+            <if test="endDatetime != null">end_datetime,</if>
+            <if test="leaveReason != null and leaveReason != ''">leave_reason,</if>
+            <if test="approvalStatus != null">approval_status,</if>
+            <if test="currentApprover != null">current_approver,</if>
+            <if test="attachmentUrl != null and attachmentUrl != ''">attachment_url,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">#{userId},</if>
+            <if test="leaveType != null and leaveType != ''">#{leaveType},</if>
+            <if test="startDatetime != null">#{startDatetime},</if>
+            <if test="endDatetime != null">#{endDatetime},</if>
+            <if test="leaveReason != null and leaveReason != ''">#{leaveReason},</if>
+            <if test="approvalStatus != null">#{approvalStatus},</if>
+            <if test="currentApprover != null">#{currentApprover},</if>
+            <if test="attachmentUrl != null and attachmentUrl != ''">#{attachmentUrl},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateAppLeaveApplication" parameterType="AppLeaveApplication">
+        update app_leave_application
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="leaveType != null and leaveType != ''">leave_type = #{leaveType},</if>
+            <if test="startDatetime != null">start_datetime = #{startDatetime},</if>
+            <if test="endDatetime != null">end_datetime = #{endDatetime},</if>
+            <if test="leaveReason != null and leaveReason != ''">leave_reason = #{leaveReason},</if>
+            <if test="approvalStatus != null">approval_status = #{approvalStatus},</if>
+            <if test="currentApprover != null">current_approver = #{currentApprover},</if>
+            <if test="attachmentUrl != null and attachmentUrl != ''">attachment_url = #{attachmentUrl},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where leave_id = #{leaveId}
+    </update>
+
+    <delete id="deleteAppLeaveApplicationByLeaveId" parameterType="Long">
+        delete from app_leave_application where leave_id = #{leaveId}
+    </delete>
+
+    <delete id="deleteAppLeaveApplicationByLeaveIds" parameterType="String">
+        delete from app_leave_application where leave_id in 
+        <foreach item="leaveId" collection="array" open="(" separator="," close=")">
+            #{leaveId}
+        </foreach>
+    </delete>
+</mapper>
