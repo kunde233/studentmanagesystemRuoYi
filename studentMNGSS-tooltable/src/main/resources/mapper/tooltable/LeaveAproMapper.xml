@@ -2,9 +2,9 @@
 <!DOCTYPE mapper
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.studentMNGSS.leaveApp.mapper.LeaveAppMapper">
+<mapper namespace="com.studentMNGSS.tooltable.mapper.leaveAproMapper">
     
-    <resultMap type="LeaveApp" id="LeaveAppResult">
+    <resultMap type="leaveApro" id="leaveAproResult">
         <result property="applicationId"    column="application_id"    />
         <result property="studentId"    column="student_id"    />
         <result property="leaveType"    column="leave_type"    />
@@ -20,12 +20,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="updateTime"    column="update_time"    />
     </resultMap>
 
-    <sql id="selectLeaveAppVo">
+    <sql id="selectleaveAproVo">
         select application_id, student_id, leave_type, start_time, end_time, reason, attachment, status, approver_id, approve_time, reject_reason, create_time, update_time from biz_leave_application
     </sql>
 
-    <select id="selectLeaveAppList" parameterType="LeaveApp" resultMap="LeaveAppResult">
-        <include refid="selectLeaveAppVo"/>
+    <select id="selectleaveAproList" parameterType="leaveApro" resultMap="leaveAproResult">
+        <include refid="selectleaveAproVo"/>
         <where>  
             <if test="leaveType != null  and leaveType != ''"> and leave_type = #{leaveType}</if>
             <if test="startTime != null "> and start_time = #{startTime}</if>
@@ -33,19 +33,19 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </where>
     </select>
     
-    <select id="selectLeaveAppByApplicationId" parameterType="Long" resultMap="LeaveAppResult">
-        <include refid="selectLeaveAppVo"/>
+    <select id="selectleaveAproByApplicationId" parameterType="Long" resultMap="leaveAproResult">
+        <include refid="selectleaveAproVo"/>
         where application_id = #{applicationId}
     </select>
 
-    <insert id="insertLeaveApp" parameterType="LeaveApp" useGeneratedKeys="true" keyProperty="applicationId">
+    <insert id="insertleaveApro" parameterType="leaveApro" useGeneratedKeys="true" keyProperty="applicationId">
         insert into biz_leave_application
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="studentId != null">student_id,</if>
-            <if test="leaveType != null and leaveType != ''">leave_type,</if>
+            <if test="leaveType != null">leave_type,</if>
             <if test="startTime != null">start_time,</if>
             <if test="endTime != null">end_time,</if>
-            <if test="reason != null and reason != ''">reason,</if>
+            <if test="reason != null">reason,</if>
             <if test="attachment != null">attachment,</if>
             <if test="status != null">status,</if>
             <if test="approverId != null">approver_id,</if>
@@ -56,10 +56,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="studentId != null">#{studentId},</if>
-            <if test="leaveType != null and leaveType != ''">#{leaveType},</if>
+            <if test="leaveType != null">#{leaveType},</if>
             <if test="startTime != null">#{startTime},</if>
             <if test="endTime != null">#{endTime},</if>
-            <if test="reason != null and reason != ''">#{reason},</if>
+            <if test="reason != null">#{reason},</if>
             <if test="attachment != null">#{attachment},</if>
             <if test="status != null">#{status},</if>
             <if test="approverId != null">#{approverId},</if>
@@ -70,14 +70,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
          </trim>
     </insert>
 
-    <update id="updateLeaveApp" parameterType="LeaveApp">
+    <update id="updateleaveApro" parameterType="leaveApro">
         update biz_leave_application
         <trim prefix="SET" suffixOverrides=",">
             <if test="studentId != null">student_id = #{studentId},</if>
-            <if test="leaveType != null and leaveType != ''">leave_type = #{leaveType},</if>
+            <if test="leaveType != null">leave_type = #{leaveType},</if>
             <if test="startTime != null">start_time = #{startTime},</if>
             <if test="endTime != null">end_time = #{endTime},</if>
-            <if test="reason != null and reason != ''">reason = #{reason},</if>
+            <if test="reason != null">reason = #{reason},</if>
             <if test="attachment != null">attachment = #{attachment},</if>
             <if test="status != null">status = #{status},</if>
             <if test="approverId != null">approver_id = #{approverId},</if>
@@ -89,11 +89,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where application_id = #{applicationId}
     </update>
 
-    <delete id="deleteLeaveAppByApplicationId" parameterType="Long">
+    <delete id="deleteleaveAproByApplicationId" parameterType="Long">
         delete from biz_leave_application where application_id = #{applicationId}
     </delete>
 
-    <delete id="deleteLeaveAppByApplicationIds" parameterType="String">
+    <delete id="deleteleaveAproByApplicationIds" parameterType="String">
         delete from biz_leave_application where application_id in 
         <foreach item="applicationId" collection="array" open="(" separator="," close=")">
             #{applicationId}

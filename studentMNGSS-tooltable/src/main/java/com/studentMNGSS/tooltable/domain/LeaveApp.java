@@ -1,4 +1,4 @@
-package com.studentMNGSS.leaveApp.domain;
+package com.studentMNGSS.tooltable.domain;
 
 import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonFormat;

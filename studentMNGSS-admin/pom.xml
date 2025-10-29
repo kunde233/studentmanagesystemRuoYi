@@ -49,6 +49,12 @@
             <artifactId>studentMNGSS-framework</artifactId>
         </dependency>
 
+        <!-- 工具台模块-->
+        <dependency>
+            <groupId>com.studentMNGSS</groupId>
+            <artifactId>studentMNGSS-tooltable</artifactId>
+        </dependency>
+
         <!-- 定时任务-->
         <dependency>
             <groupId>com.studentMNGSS</groupId>

@@ -1,15 +1,16 @@
-package com.studentMNGSS.leaveApp.mapper;
+package com.studentMNGSS.tooltable.service;
 
 import java.util.List;
-import com.studentMNGSS.leaveApp.domain.LeaveApp;
+
+import com.studentMNGSS.tooltable.domain.LeaveApp;
 
 /**
- * 请假申请Mapper接口
+ * 请假申请Service接口
  * 
  * @author ruoyi
  * @date 2025-10-27
  */
-public interface LeaveAppMapper 
+public interface ILeaveAppService 
 {
     /**
      * 查询请假申请
@@ -44,18 +45,18 @@ public interface LeaveAppMapper
     public int updateLeaveApp(LeaveApp leaveApp);
 
     /**
-     * 删除请假申请
+     * 批量删除请假申请
+     * 
+     * @param applicationIds 需要删除的请假申请主键集合
+     * @return 结果
+     */
+    public int deleteLeaveAppByApplicationIds(Long[] applicationIds);
+
+    /**
+     * 删除请假申请信息
      * 
      * @param applicationId 请假申请主键
      * @return 结果
      */
     public int deleteLeaveAppByApplicationId(Long applicationId);
-
-    /**
-     * 批量删除请假申请
-     * 
-     * @param applicationIds 需要删除的数据主键集合
-     * @return 结果
-     */
-    public int deleteLeaveAppByApplicationIds(Long[] applicationIds);
 }
