@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.studentMNGSS.tooltable.mapper.ReturnAppMapper">
+    
+    <resultMap type="ReturnApp" id="ReturnAppResult">
+        <result property="applicationId"    column="application_id"    />
+        <result property="studentId"    column="student_id"    />
+        <result property="plannedReturnTime"    column="planned_return_time"    />
+        <result property="transportation"    column="transportation"    />
+        <result property="healthStatus"    column="health_status"    />
+        <result property="travelCodeAttachment"    column="travel_code_attachment"    />
+        <result property="status"    column="status"    />
+        <result property="approvalComment"    column="approval_comment"    />
+        <result property="createTime"    column="create_time"    />
+    </resultMap>
+
+    <sql id="selectReturnAppVo">
+        select application_id, student_id, planned_return_time, transportation, health_status, travel_code_attachment, status, approval_comment, create_time from biz_return_application
+    </sql>
+
+    <select id="selectReturnAppList" parameterType="ReturnApp" resultMap="ReturnAppResult">
+        <include refid="selectReturnAppVo"/>
+        <where>  
+            <if test="plannedReturnTime != null "> and planned_return_time = #{plannedReturnTime}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+        </where>
+    </select>
+    
+    <select id="selectReturnAppByApplicationId" parameterType="Long" resultMap="ReturnAppResult">
+        <include refid="selectReturnAppVo"/>
+        where application_id = #{applicationId}
+    </select>
+
+    <insert id="insertReturnApp" parameterType="ReturnApp" useGeneratedKeys="true" keyProperty="applicationId">
+        insert into biz_return_application
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="studentId != null">student_id,</if>
+            <if test="plannedReturnTime != null">planned_return_time,</if>
+            <if test="transportation != null and transportation != ''">transportation,</if>
+            <if test="healthStatus != null and healthStatus != ''">health_status,</if>
+            <if test="travelCodeAttachment != null">travel_code_attachment,</if>
+            <if test="status != null">status,</if>
+            <if test="approvalComment != null">approval_comment,</if>
+            <if test="createTime != null">create_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="studentId != null">#{studentId},</if>
+            <if test="plannedReturnTime != null">#{plannedReturnTime},</if>
+            <if test="transportation != null and transportation != ''">#{transportation},</if>
+            <if test="healthStatus != null and healthStatus != ''">#{healthStatus},</if>
+            <if test="travelCodeAttachment != null">#{travelCodeAttachment},</if>
+            <if test="status != null">#{status},</if>
+            <if test="approvalComment != null">#{approvalComment},</if>
+            <if test="createTime != null">#{createTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateReturnApp" parameterType="ReturnApp">
+        update biz_return_application
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="studentId != null">student_id = #{studentId},</if>
+            <if test="plannedReturnTime != null">planned_return_time = #{plannedReturnTime},</if>
+            <if test="transportation != null and transportation != ''">transportation = #{transportation},</if>
+            <if test="healthStatus != null and healthStatus != ''">health_status = #{healthStatus},</if>
+            <if test="travelCodeAttachment != null">travel_code_attachment = #{travelCodeAttachment},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="approvalComment != null">approval_comment = #{approvalComment},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+        </trim>
+        where application_id = #{applicationId}
+    </update>
+
+    <delete id="deleteReturnAppByApplicationId" parameterType="Long">
+        delete from biz_return_application where application_id = #{applicationId}
+    </delete>
+
+    <delete id="deleteReturnAppByApplicationIds" parameterType="String">
+        delete from biz_return_application where application_id in 
+        <foreach item="applicationId" collection="array" open="(" separator="," close=")">
+            #{applicationId}
+        </foreach>
+    </delete>
+</mapper>
