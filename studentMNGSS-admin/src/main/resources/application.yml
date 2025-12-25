@@ -134,3 +134,12 @@ xss:
   excludes: /system/notice
   # 匹配链接
   urlPatterns: /system/*,/monitor/*,/tool/*
+knife4j:
+  enable: true
+  production: false
+  basic:
+    enable: false
+    username: ruoyi
+    password: 123456
+  setting:
+    swagger-model-name: 实体类列表

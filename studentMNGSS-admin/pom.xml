@@ -16,6 +16,12 @@
     </description>
 
     <dependencies>
+        <!-- ruoyi-springboot3 / springdoc knife4j 配置 -->
+        <dependency>
+            <groupId>com.github.xiaoymin</groupId>
+            <artifactId>knife4j-openapi3-jakarta-spring-boot-starter</artifactId>
+            <version>4.4.0</version>
+        </dependency>
 
         <!-- spring-boot-devtools -->
         <dependency>
