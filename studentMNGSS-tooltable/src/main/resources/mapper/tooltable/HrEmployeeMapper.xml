@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.studentMNGSS.tooltable.mapper.HrEmployeeMapper">
+
+    <resultMap type="HrEmployee" id="HrEmployeeResult">
+        <result property="employeeId"         column="employee_id"          />
+        <result property="employeeCode"       column="employee_code"        />
+        <result property="employeeName"       column="employee_name"        />
+        <result property="gender"             column="gender"               />
+        <result property="deptIdFirst"        column="dept_id_first"        />
+        <result property="deptNameFirst"      column="dept_name_first"      />
+        <result property="deptIdSecond"       column="dept_id_second"       />
+        <result property="deptNameSecond"     column="dept_name_second"     />
+        <result property="deptIdThird"        column="dept_id_third"        />
+        <result property="deptNameThird"      column="dept_name_third"      />
+        <result property="positionId"         column="position_id"          />
+        <result property="positionName"       column="position_name"        />
+        <result property="title"              column="title"                />
+        <result property="salaryStandardId"   column="salary_standard_id"   />
+        <result property="salaryStandardName" column="salary_standard_name" />
+        <result property="email"              column="email"                />
+        <result property="phone"              column="phone"                />
+        <result property="qq"                 column="qq"                   />
+        <result property="mobile"             column="mobile"               />
+        <result property="address"            column="address"              />
+        <result property="postCode"           column="post_code"            />
+        <result property="nationality"        column="nationality"          />
+        <result property="birthplace"         column="birthplace"           />
+        <result property="birthday"           column="birthday"             />
+        <result property="nation"             column="nation"               />
+        <result property="religion"           column="religion"             />
+        <result property="politicalStatus"    column="political_status"     />
+        <result property="idCard"             column="id_card"              />
+        <result property="education"          column="education"            />
+        <result property="photo"              column="photo"                />
+        <result property="resume"             column="resume"               />
+        <result property="familyInfo"         column="family_info"          />
+        <result property="status"             column="status"               />
+        <result property="registerBy"         column="register_by"          />
+        <result property="registerTime"       column="register_time"        />
+        <result property="reviewer"           column="reviewer"             />
+        <result property="reviewTime"         column="review_time"          />
+        <result property="delFlag"            column="del_flag"             />
+        <result property="createBy"           column="create_by"            />
+        <result property="createTime"         column="create_time"          />
+        <result property="updateBy"           column="update_by"            />
+        <result property="updateTime"         column="update_time"          />
+        <result property="remark"             column="remark"               />
+    </resultMap>
+
+    <sql id="selectHrEmployeeVo">
+        select e.employee_id, e.employee_code, e.employee_name, e.gender,
+               e.dept_id_first, d1.dept_name as dept_name_first,
+               e.dept_id_second, d2.dept_name as dept_name_second,
+               e.dept_id_third, d3.dept_name as dept_name_third,
+               e.position_id, p.position_name,
+               e.title, e.salary_standard_id, s.standard_name as salary_standard_name,
+               e.email, e.phone, e.qq, e.mobile, e.address, e.post_code,
+               e.nationality, e.birthplace, e.birthday, e.nation, e.religion,
+               e.political_status, e.id_card, e.education, e.photo, e.resume,
+               e.family_info, e.status, e.register_by, e.register_time,
+               e.reviewer, e.review_time, e.del_flag,
+               e.create_by, e.create_time, e.update_by, e.update_time, e.remark
+        from hr_employee e
+        left join sys_dept d1 on e.dept_id_first = d1.dept_id
+        left join sys_dept d2 on e.dept_id_second = d2.dept_id
+        left join sys_dept d3 on e.dept_id_third = d3.dept_id
+        left join hr_position p on e.position_id = p.position_id
+        left join hr_salary_standard s on e.salary_standard_id = s.standard_id
+    </sql>
+
+    <select id="selectHrEmployeeList" parameterType="HrEmployee" resultMap="HrEmployeeResult">
+        <include refid="selectHrEmployeeVo"/>
+        <where>
+            (e.del_flag = '0' or e.status = '2')
+            <if test="employeeCode != null  and employeeCode != ''"> and e.employee_code like concat('%', #{employeeCode}, '%')</if>
+            <if test="employeeName != null  and employeeName != ''"> and e.employee_name like concat('%', #{employeeName}, '%')</if>
+            <if test="gender != null  and gender != ''"> and e.gender = #{gender}</if>
+            <if test="deptIdFirst != null "> and e.dept_id_first = #{deptIdFirst}</if>
+            <if test="deptIdSecond != null "> and e.dept_id_second = #{deptIdSecond}</if>
+            <if test="deptIdThird != null "> and e.dept_id_third = #{deptIdThird}</if>
+            <if test="positionId != null "> and e.position_id = #{positionId}</if>
+            <if test="title != null  and title != ''"> and e.title = #{title}</if>
+            <if test="idCard != null  and idCard != ''"> and e.id_card like concat('%', #{idCard}, '%')</if>
+            <if test="status != null  and status != ''"> and e.status = #{status}</if>
+        </where>
+        order by e.create_time desc
+    </select>
+
+    <select id="selectHrEmployeePendingReviewList" parameterType="HrEmployee" resultMap="HrEmployeeResult">
+        <include refid="selectHrEmployeeVo"/>
+        <where>
+            e.del_flag = '0' and e.status = '0'
+            <if test="employeeCode != null  and employeeCode != ''"> and e.employee_code like concat('%', #{employeeCode}, '%')</if>
+            <if test="employeeName != null  and employeeName != ''"> and e.employee_name like concat('%', #{employeeName}, '%')</if>
+            <if test="deptIdFirst != null "> and e.dept_id_first = #{deptIdFirst}</if>
+            <if test="deptIdSecond != null "> and e.dept_id_second = #{deptIdSecond}</if>
+            <if test="deptIdThird != null "> and e.dept_id_third = #{deptIdThird}</if>
+        </where>
+        order by e.register_time desc
+    </select>
+
+    <select id="selectHrEmployeeByEmployeeId" parameterType="Long" resultMap="HrEmployeeResult">
+        <include refid="selectHrEmployeeVo"/>
+        where e.employee_id = #{employeeId}
+    </select>
+
+    <select id="checkIdCardUnique" parameterType="String" resultMap="HrEmployeeResult">
+        select employee_id, id_card from hr_employee where id_card = #{idCard} and del_flag = '0' limit 1
+    </select>
+
+    <select id="selectMaxEmployeeCode" parameterType="String" resultType="String">
+        select max(employee_code) from hr_employee where employee_code like concat(#{codePrefix}, '%')
+    </select>
+
+    <select id="countByStatus" parameterType="String" resultType="int">
+        select count(*) from hr_employee where status = #{status} and del_flag = '0'
+    </select>
+
+    <select id="selectHrEmployeeWithSalaryStandard" parameterType="HrEmployee" resultMap="HrEmployeeResult">
+        <include refid="selectHrEmployeeVo"/>
+        <where>
+            e.del_flag = '0' and e.status = '1' and e.salary_standard_id is not null
+            <if test="deptIdFirst != null"> and e.dept_id_first = #{deptIdFirst}</if>
+            <if test="deptIdSecond != null"> and e.dept_id_second = #{deptIdSecond}</if>
+            <if test="deptIdThird != null"> and e.dept_id_third = #{deptIdThird}</if>
+        </where>
+        order by e.employee_code
+    </select>
+
+    <insert id="insertHrEmployee" parameterType="HrEmployee" useGeneratedKeys="true" keyProperty="employeeId">
+        insert into hr_employee
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="employeeCode != null and employeeCode != ''">employee_code,</if>
+            <if test="employeeName != null and employeeName != ''">employee_name,</if>
+            <if test="gender != null">gender,</if>
+            <if test="deptIdFirst != null">dept_id_first,</if>
+            <if test="deptIdSecond != null">dept_id_second,</if>
+            <if test="deptIdThird != null">dept_id_third,</if>
+            <if test="positionId != null">position_id,</if>
+            <if test="title != null">title,</if>
+            <if test="salaryStandardId != null">salary_standard_id,</if>
+            <if test="email != null">email,</if>
+            <if test="phone != null">phone,</if>
+            <if test="qq != null">qq,</if>
+            <if test="mobile != null">mobile,</if>
+            <if test="address != null">address,</if>
+            <if test="postCode != null">post_code,</if>
+            <if test="nationality != null">nationality,</if>
+            <if test="birthplace != null">birthplace,</if>
+            <if test="birthday != null">birthday,</if>
+            <if test="nation != null">nation,</if>
+            <if test="religion != null">religion,</if>
+            <if test="politicalStatus != null">political_status,</if>
+            <if test="idCard != null">id_card,</if>
+            <if test="education != null">education,</if>
+            <if test="photo != null">photo,</if>
+            <if test="resume != null">resume,</if>
+            <if test="familyInfo != null">family_info,</if>
+            <if test="status != null">status,</if>
+            <if test="registerBy != null">register_by,</if>
+            <if test="registerTime != null">register_time,</if>
+            <if test="reviewer != null">reviewer,</if>
+            <if test="reviewTime != null">review_time,</if>
+            <if test="delFlag != null">del_flag,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="employeeCode != null and employeeCode != ''">#{employeeCode},</if>
+            <if test="employeeName != null and employeeName != ''">#{employeeName},</if>
+            <if test="gender != null">#{gender},</if>
+            <if test="deptIdFirst != null">#{deptIdFirst},</if>
+            <if test="deptIdSecond != null">#{deptIdSecond},</if>
+            <if test="deptIdThird != null">#{deptIdThird},</if>
+            <if test="positionId != null">#{positionId},</if>
+            <if test="title != null">#{title},</if>
+            <if test="salaryStandardId != null">#{salaryStandardId},</if>
+            <if test="email != null">#{email},</if>
+            <if test="phone != null">#{phone},</if>
+            <if test="qq != null">#{qq},</if>
+            <if test="mobile != null">#{mobile},</if>
+            <if test="address != null">#{address},</if>
+            <if test="postCode != null">#{postCode},</if>
+            <if test="nationality != null">#{nationality},</if>
+            <if test="birthplace != null">#{birthplace},</if>
+            <if test="birthday != null">#{birthday},</if>
+            <if test="nation != null">#{nation},</if>
+            <if test="religion != null">#{religion},</if>
+            <if test="politicalStatus != null">#{politicalStatus},</if>
+            <if test="idCard != null">#{idCard},</if>
+            <if test="education != null">#{education},</if>
+            <if test="photo != null">#{photo},</if>
+            <if test="resume != null">#{resume},</if>
+            <if test="familyInfo != null">#{familyInfo},</if>
+            <if test="status != null">#{status},</if>
+            <if test="registerBy != null">#{registerBy},</if>
+            <if test="registerTime != null">#{registerTime},</if>
+            <if test="reviewer != null">#{reviewer},</if>
+            <if test="reviewTime != null">#{reviewTime},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateHrEmployee" parameterType="HrEmployee">
+        update hr_employee
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="employeeName != null and employeeName != ''">employee_name = #{employeeName},</if>
+            <if test="gender != null">gender = #{gender},</if>
+            <if test="title != null">title = #{title},</if>
+            <if test="salaryStandardId != null">salary_standard_id = #{salaryStandardId},</if>
+            <if test="email != null">email = #{email},</if>
+            <if test="phone != null">phone = #{phone},</if>
+            <if test="qq != null">qq = #{qq},</if>
+            <if test="mobile != null">mobile = #{mobile},</if>
+            <if test="address != null">address = #{address},</if>
+            <if test="postCode != null">post_code = #{postCode},</if>
+            <if test="nationality != null">nationality = #{nationality},</if>
+            <if test="birthplace != null">birthplace = #{birthplace},</if>
+            <if test="birthday != null">birthday = #{birthday},</if>
+            <if test="nation != null">nation = #{nation},</if>
+            <if test="religion != null">religion = #{religion},</if>
+            <if test="politicalStatus != null">political_status = #{politicalStatus},</if>
+            <if test="idCard != null">id_card = #{idCard},</if>
+            <if test="education != null">education = #{education},</if>
+            <if test="photo != null">photo = #{photo},</if>
+            <if test="resume != null">resume = #{resume},</if>
+            <if test="familyInfo != null">family_info = #{familyInfo},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="reviewer != null">reviewer = #{reviewer},</if>
+            <if test="reviewTime != null">review_time = #{reviewTime},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where employee_id = #{employeeId}
+    </update>
+
+    <delete id="deleteHrEmployeeByEmployeeId" parameterType="Long">
+        update hr_employee set status = '2', del_flag = '2' where employee_id = #{employeeId}
+    </delete>
+
+    <delete id="deleteHrEmployeeByEmployeeIds" parameterType="String">
+        update hr_employee set status = '2', del_flag = '2' where employee_id in
+        <foreach item="employeeId" collection="array" open="(" separator="," close=")">
+            #{employeeId}
+        </foreach>
+    </delete>
+</mapper>

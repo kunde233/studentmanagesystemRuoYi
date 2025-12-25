@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.studentMNGSS.tooltable.mapper.HrSalaryStandardMapper">
+
+    <resultMap type="HrSalaryStandard" id="HrSalaryStandardResult">
+        <result property="standardId"     column="standard_id"     />
+        <result property="standardCode"   column="standard_code"   />
+        <result property="standardName"   column="standard_name"   />
+        <result property="positionId"     column="position_id"     />
+        <result property="positionName"   column="position_name"   />
+        <result property="title"          column="title"           />
+        <result property="totalAmount"    column="total_amount"    />
+        <result property="maker"          column="maker"           />
+        <result property="changer"        column="changer"         />
+        <result property="changeTime"     column="change_time"     />
+        <result property="reviewer"       column="reviewer"        />
+        <result property="reviewTime"     column="review_time"     />
+        <result property="status"         column="status"          />
+        <result property="delFlag"        column="del_flag"        />
+        <result property="createBy"       column="create_by"       />
+        <result property="createTime"     column="create_time"     />
+        <result property="updateBy"       column="update_by"       />
+        <result property="updateTime"     column="update_time"     />
+        <result property="remark"         column="remark"          />
+    </resultMap>
+
+    <resultMap type="HrSalaryStandardDetail" id="HrSalaryStandardDetailResult">
+        <result property="detailId"       column="detail_id"       />
+        <result property="standardId"     column="standard_id"     />
+        <result property="itemId"         column="item_id"         />
+        <result property="itemName"       column="item_name"       />
+        <result property="itemType"       column="item_type"       />
+        <result property="amount"         column="amount"          />
+    </resultMap>
+
+    <sql id="selectHrSalaryStandardVo">
+        select s.standard_id, s.standard_code, s.standard_name, s.position_id, p.position_name, s.title, s.total_amount, s.maker, s.changer, s.change_time, s.reviewer, s.review_time, s.status, s.del_flag, s.create_by, s.create_time, s.update_by, s.update_time, s.remark
+        from hr_salary_standard s
+        left join hr_position p on s.position_id = p.position_id
+    </sql>
+
+    <select id="selectHrSalaryStandardList" parameterType="HrSalaryStandard" resultMap="HrSalaryStandardResult">
+        <include refid="selectHrSalaryStandardVo"/>
+        <where>
+            s.del_flag = '0'
+            <if test="standardCode != null  and standardCode != ''"> and s.standard_code like concat('%', #{standardCode}, '%')</if>
+            <if test="standardName != null  and standardName != ''"> and s.standard_name like concat('%', #{standardName}, '%')</if>
+            <if test="positionId != null"> and s.position_id = #{positionId}</if>
+            <if test="title != null  and title != ''"> and s.title = #{title}</if>
+            <if test="maker != null  and maker != ''"> and s.maker like concat('%', #{maker}, '%')</if>
+            <if test="status != null  and status != ''"> and s.status = #{status}</if>
+        </where>
+        order by s.create_time desc
+    </select>
+
+    <select id="selectHrSalaryStandardByStandardId" parameterType="Long" resultMap="HrSalaryStandardResult">
+        <include refid="selectHrSalaryStandardVo"/>
+        where s.standard_id = #{standardId}
+    </select>
+
+    <select id="selectHrSalaryStandardAll" resultMap="HrSalaryStandardResult">
+        <include refid="selectHrSalaryStandardVo"/>
+        where s.del_flag = '0' and s.status = '1'
+        order by s.standard_code
+    </select>
+
+    <select id="selectHrSalaryStandardDetailByStandardId" parameterType="Long" resultMap="HrSalaryStandardDetailResult">
+        select d.detail_id, d.standard_id, d.item_id, i.item_name, i.item_type, d.amount
+        from hr_salary_standard_detail d
+        left join hr_salary_item i on d.item_id = i.item_id
+        where d.standard_id = #{standardId}
+        order by i.item_sort
+    </select>
+
+    <select id="checkStandardCodeUnique" parameterType="String" resultMap="HrSalaryStandardResult">
+        select s.standard_id, s.standard_code, s.standard_name, s.position_id, s.title, s.total_amount, s.maker, s.status, s.del_flag, s.create_by, s.create_time, s.update_by, s.update_time, s.remark
+        from hr_salary_standard s
+        where s.standard_code = #{standardCode} and s.del_flag = '0' limit 1
+    </select>
+
+    <select id="selectMaxStandardCode" resultType="String">
+        select max(standard_code) from hr_salary_standard
+    </select>
+
+    <insert id="insertHrSalaryStandard" parameterType="HrSalaryStandard" useGeneratedKeys="true" keyProperty="standardId">
+        insert into hr_salary_standard
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="standardCode != null and standardCode != ''">standard_code,</if>
+            <if test="standardName != null and standardName != ''">standard_name,</if>
+            <if test="positionId != null">position_id,</if>
+            <if test="title != null">title,</if>
+            <if test="totalAmount != null">total_amount,</if>
+            <if test="maker != null">maker,</if>
+            <if test="status != null">status,</if>
+            <if test="delFlag != null">del_flag,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="standardCode != null and standardCode != ''">#{standardCode},</if>
+            <if test="standardName != null and standardName != ''">#{standardName},</if>
+            <if test="positionId != null">#{positionId},</if>
+            <if test="title != null">#{title},</if>
+            <if test="totalAmount != null">#{totalAmount},</if>
+            <if test="maker != null">#{maker},</if>
+            <if test="status != null">#{status},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <insert id="insertHrSalaryStandardDetail" parameterType="HrSalaryStandardDetail" useGeneratedKeys="true" keyProperty="detailId">
+        insert into hr_salary_standard_detail (standard_id, item_id, amount)
+        values (#{standardId}, #{itemId}, #{amount})
+    </insert>
+
+    <update id="updateHrSalaryStandard" parameterType="HrSalaryStandard">
+        update hr_salary_standard
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="standardName != null and standardName != ''">standard_name = #{standardName},</if>
+            <if test="positionId != null">position_id = #{positionId},</if>
+            <if test="title != null">title = #{title},</if>
+            <if test="totalAmount != null">total_amount = #{totalAmount},</if>
+            <if test="maker != null">maker = #{maker},</if>
+            <if test="changer != null">changer = #{changer},</if>
+            <if test="changeTime != null">change_time = #{changeTime},</if>
+            <if test="reviewer != null">reviewer = #{reviewer},</if>
+            <if test="reviewTime != null">review_time = #{reviewTime},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where standard_id = #{standardId}
+    </update>
+
+    <delete id="deleteHrSalaryStandardByStandardId" parameterType="Long">
+        update hr_salary_standard set del_flag = '2' where standard_id = #{standardId}
+    </delete>
+
+    <delete id="deleteHrSalaryStandardByStandardIds" parameterType="String">
+        update hr_salary_standard set del_flag = '2' where standard_id in
+        <foreach item="standardId" collection="array" open="(" separator="," close=")">
+            #{standardId}
+        </foreach>
+    </delete>
+
+    <delete id="deleteHrSalaryStandardDetailByStandardId" parameterType="Long">
+        delete from hr_salary_standard_detail where standard_id = #{standardId}
+    </delete>
+</mapper>

@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.studentMNGSS.tooltable.mapper.HrTransferMapper">
+
+    <resultMap type="HrTransfer" id="HrTransferResult">
+        <result property="transferId"       column="transfer_id"        />
+        <result property="transferCode"     column="transfer_code"      />
+        <result property="employeeId"       column="employee_id"        />
+        <result property="employeeName"     column="employee_name"      />
+        <result property="transferType"     column="transfer_type"      />
+        <result property="oldDeptId"        column="old_dept_id"        />
+        <result property="oldDeptName"      column="old_dept_name"      />
+        <result property="oldPositionId"    column="old_position_id"    />
+        <result property="oldPositionName"  column="old_position_name"  />
+        <result property="newDeptIdFirst"   column="new_dept_id_first"  />
+        <result property="newDeptIdSecond"  column="new_dept_id_second" />
+        <result property="newDeptIdThird"   column="new_dept_id_third"  />
+        <result property="newDeptName"      column="new_dept_name"      />
+        <result property="newPositionId"    column="new_position_id"    />
+        <result property="newPositionName"  column="new_position_name"  />
+        <result property="transferDate"     column="transfer_date"      />
+        <result property="transferReason"   column="transfer_reason"    />
+        <result property="status"           column="status"             />
+        <result property="reviewer"         column="reviewer"           />
+        <result property="reviewTime"       column="review_time"        />
+        <result property="delFlag"          column="del_flag"           />
+        <result property="createBy"         column="create_by"          />
+        <result property="createTime"       column="create_time"        />
+        <result property="updateBy"         column="update_by"          />
+        <result property="updateTime"       column="update_time"        />
+        <result property="remark"           column="remark"             />
+    </resultMap>
+
+    <sql id="selectHrTransferVo">
+        select t.transfer_id, t.transfer_code, t.employee_id, e.employee_name,
+               t.transfer_type, t.old_dept_id, od.dept_name as old_dept_name,
+               t.old_position_id, op.position_name as old_position_name,
+               t.new_dept_id_first, t.new_dept_id_second, t.new_dept_id_third,
+               nd.dept_name as new_dept_name, t.new_position_id, np.position_name as new_position_name,
+               t.transfer_date, t.transfer_reason, t.status, t.reviewer, t.review_time,
+               t.del_flag, t.create_by, t.create_time, t.update_by, t.update_time, t.remark
+        from hr_transfer t
+        left join hr_employee e on t.employee_id = e.employee_id
+        left join sys_dept od on t.old_dept_id = od.dept_id
+        left join hr_position op on t.old_position_id = op.position_id
+        left join sys_dept nd on t.new_dept_id_third = nd.dept_id
+        left join hr_position np on t.new_position_id = np.position_id
+    </sql>
+
+    <select id="selectHrTransferList" parameterType="HrTransfer" resultMap="HrTransferResult">
+        <include refid="selectHrTransferVo"/>
+        <where>
+            t.del_flag = '0'
+            <if test="employeeName != null  and employeeName != ''"> and e.employee_name like concat('%', #{employeeName}, '%')</if>
+            <if test="transferType != null  and transferType != ''"> and t.transfer_type = #{transferType}</if>
+            <if test="status != null  and status != ''"> and t.status = #{status}</if>
+            <if test="params.beginTransferDate != null and params.beginTransferDate != '' and params.endTransferDate != null and params.endTransferDate != ''">
+                and t.transfer_date between #{params.beginTransferDate} and #{params.endTransferDate}
+            </if>
+        </where>
+        order by t.create_time desc
+    </select>
+
+    <select id="selectHrTransferByTransferId" parameterType="Long" resultMap="HrTransferResult">
+        <include refid="selectHrTransferVo"/>
+        where t.transfer_id = #{transferId}
+    </select>
+
+    <select id="selectTodayTransferCount" resultType="int">
+        select count(*) from hr_transfer where date(create_time) = curdate()
+    </select>
+
+    <insert id="insertHrTransfer" parameterType="HrTransfer" useGeneratedKeys="true" keyProperty="transferId">
+        insert into hr_transfer
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="transferCode != null and transferCode != ''">transfer_code,</if>
+            <if test="employeeId != null">employee_id,</if>
+            <if test="transferType != null">transfer_type,</if>
+            <if test="oldDeptId != null">old_dept_id,</if>
+            <if test="oldPositionId != null">old_position_id,</if>
+            <if test="newDeptIdFirst != null">new_dept_id_first,</if>
+            <if test="newDeptIdSecond != null">new_dept_id_second,</if>
+            <if test="newDeptIdThird != null">new_dept_id_third,</if>
+            <if test="newPositionId != null">new_position_id,</if>
+            <if test="transferDate != null">transfer_date,</if>
+            <if test="transferReason != null">transfer_reason,</if>
+            <if test="status != null">status,</if>
+            <if test="reviewer != null">reviewer,</if>
+            <if test="reviewTime != null">review_time,</if>
+            <if test="delFlag != null">del_flag,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="transferCode != null and transferCode != ''">#{transferCode},</if>
+            <if test="employeeId != null">#{employeeId},</if>
+            <if test="transferType != null">#{transferType},</if>
+            <if test="oldDeptId != null">#{oldDeptId},</if>
+            <if test="oldPositionId != null">#{oldPositionId},</if>
+            <if test="newDeptIdFirst != null">#{newDeptIdFirst},</if>
+            <if test="newDeptIdSecond != null">#{newDeptIdSecond},</if>
+            <if test="newDeptIdThird != null">#{newDeptIdThird},</if>
+            <if test="newPositionId != null">#{newPositionId},</if>
+            <if test="transferDate != null">#{transferDate},</if>
+            <if test="transferReason != null">#{transferReason},</if>
+            <if test="status != null">#{status},</if>
+            <if test="reviewer != null">#{reviewer},</if>
+            <if test="reviewTime != null">#{reviewTime},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateHrTransfer" parameterType="HrTransfer">
+        update hr_transfer
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="transferCode != null and transferCode != ''">transfer_code = #{transferCode},</if>
+            <if test="employeeId != null">employee_id = #{employeeId},</if>
+            <if test="transferType != null">transfer_type = #{transferType},</if>
+            <if test="oldDeptId != null">old_dept_id = #{oldDeptId},</if>
+            <if test="oldPositionId != null">old_position_id = #{oldPositionId},</if>
+            <if test="newDeptIdFirst != null">new_dept_id_first = #{newDeptIdFirst},</if>
+            <if test="newDeptIdSecond != null">new_dept_id_second = #{newDeptIdSecond},</if>
+            <if test="newDeptIdThird != null">new_dept_id_third = #{newDeptIdThird},</if>
+            <if test="newPositionId != null">new_position_id = #{newPositionId},</if>
+            <if test="transferDate != null">transfer_date = #{transferDate},</if>
+            <if test="transferReason != null">transfer_reason = #{transferReason},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="reviewer != null">reviewer = #{reviewer},</if>
+            <if test="reviewTime != null">review_time = #{reviewTime},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where transfer_id = #{transferId}
+    </update>
+
+    <delete id="deleteHrTransferByTransferId" parameterType="Long">
+        update hr_transfer set del_flag = '2' where transfer_id = #{transferId}
+    </delete>
+
+    <delete id="deleteHrTransferByTransferIds" parameterType="String">
+        update hr_transfer set del_flag = '2' where transfer_id in
+        <foreach item="transferId" collection="array" open="(" separator="," close=")">
+            #{transferId}
+        </foreach>
+    </delete>
+</mapper>

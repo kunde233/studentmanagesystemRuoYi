@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.studentMNGSS.tooltable.mapper.HrSalaryItemMapper">
+
+    <resultMap type="HrSalaryItem" id="HrSalaryItemResult">
+        <result property="itemId"       column="item_id"       />
+        <result property="itemCode"     column="item_code"     />
+        <result property="itemName"     column="item_name"     />
+        <result property="itemType"     column="item_type"     />
+        <result property="itemSort"     column="item_sort"     />
+        <result property="status"       column="status"        />
+        <result property="delFlag"      column="del_flag"      />
+        <result property="createBy"     column="create_by"     />
+        <result property="createTime"   column="create_time"   />
+        <result property="updateBy"     column="update_by"     />
+        <result property="updateTime"   column="update_time"   />
+        <result property="remark"       column="remark"        />
+    </resultMap>
+
+    <sql id="selectHrSalaryItemVo">
+        select item_id, item_code, item_name, item_type, item_sort, status, del_flag, create_by, create_time, update_by, update_time, remark from hr_salary_item
+    </sql>
+
+    <select id="selectHrSalaryItemList" parameterType="HrSalaryItem" resultMap="HrSalaryItemResult">
+        <include refid="selectHrSalaryItemVo"/>
+        <where>
+            del_flag = '0'
+            <if test="itemCode != null  and itemCode != ''"> and item_code like concat('%', #{itemCode}, '%')</if>
+            <if test="itemName != null  and itemName != ''"> and item_name like concat('%', #{itemName}, '%')</if>
+            <if test="itemType != null  and itemType != ''"> and item_type = #{itemType}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+        </where>
+        order by item_sort
+    </select>
+
+    <select id="selectHrSalaryItemByItemId" parameterType="Long" resultMap="HrSalaryItemResult">
+        <include refid="selectHrSalaryItemVo"/>
+        where item_id = #{itemId}
+    </select>
+
+    <select id="selectHrSalaryItemAll" resultMap="HrSalaryItemResult">
+        <include refid="selectHrSalaryItemVo"/>
+        where del_flag = '0' and status = '0'
+        order by item_sort
+    </select>
+
+    <select id="checkItemCodeUnique" parameterType="String" resultMap="HrSalaryItemResult">
+        <include refid="selectHrSalaryItemVo"/>
+        where item_code = #{itemCode} and del_flag = '0' limit 1
+    </select>
+
+    <insert id="insertHrSalaryItem" parameterType="HrSalaryItem" useGeneratedKeys="true" keyProperty="itemId">
+        insert into hr_salary_item
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="itemCode != null and itemCode != ''">item_code,</if>
+            <if test="itemName != null and itemName != ''">item_name,</if>
+            <if test="itemType != null">item_type,</if>
+            <if test="itemSort != null">item_sort,</if>
+            <if test="status != null">status,</if>
+            <if test="delFlag != null">del_flag,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="itemCode != null and itemCode != ''">#{itemCode},</if>
+            <if test="itemName != null and itemName != ''">#{itemName},</if>
+            <if test="itemType != null">#{itemType},</if>
+            <if test="itemSort != null">#{itemSort},</if>
+            <if test="status != null">#{status},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateHrSalaryItem" parameterType="HrSalaryItem">
+        update hr_salary_item
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="itemCode != null and itemCode != ''">item_code = #{itemCode},</if>
+            <if test="itemName != null and itemName != ''">item_name = #{itemName},</if>
+            <if test="itemType != null">item_type = #{itemType},</if>
+            <if test="itemSort != null">item_sort = #{itemSort},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where item_id = #{itemId}
+    </update>
+
+    <delete id="deleteHrSalaryItemByItemId" parameterType="Long">
+        update hr_salary_item set del_flag = '2' where item_id = #{itemId}
+    </delete>
+
+    <delete id="deleteHrSalaryItemByItemIds" parameterType="String">
+        update hr_salary_item set del_flag = '2' where item_id in
+        <foreach item="itemId" collection="array" open="(" separator="," close=")">
+            #{itemId}
+        </foreach>
+    </delete>
+</mapper>
