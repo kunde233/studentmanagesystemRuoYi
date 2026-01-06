@@ -42,6 +42,15 @@ nbdist/
 *.xml.versionsBackup
 *.swp
 
+# Windows reserved device names
+nul
+NUL
+CON
+PRN
+AUX
+com[1-9]
+lpt[1-9]
+
 !*/build/*.java
 !*/build/*.html
 !*/build/*.xml
